@@ -11,7 +11,6 @@ C---
 # | Left     | Change saturation   |
 
 blueprint:
-  #source_url: https://github.com/niro1987/homeassistant-config/blob/master/blueprints/automation/niro1987/zha_ikea_tradfri_5button_remote_color.yaml
   source_url: https://github.com/vdGeld/homeassistant-config/edit/master/blueprints/automation/niro1987/deConz_ikea_tradfri_5button_remote_color.yaml
 
   name: deConz - IKEA TRADFRI - 5 Button Remote - Color Lights
