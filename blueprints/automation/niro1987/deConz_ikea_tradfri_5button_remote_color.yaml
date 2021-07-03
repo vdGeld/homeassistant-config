@@ -1,6 +1,6 @@
----
+C---
 # This automation simulates the use of the IKEA TRADFRI Remote control
-# connected through ZHA.
+# connected through deConz.
 
 # | Button   | Action              |
 # | -------- | ------------------- |
@@ -11,13 +11,14 @@
 # | Left     | Change saturation   |
 
 blueprint:
-  source_url: https://github.com/niro1987/homeassistant-config/blob/master/blueprints/automation/niro1987/zha_ikea_tradfri_5button_remote_color.yaml
+  #source_url: https://github.com/niro1987/homeassistant-config/blob/master/blueprints/automation/niro1987/zha_ikea_tradfri_5button_remote_color.yaml
+  source_url: https://github.com/vdGeld/homeassistant-config/edit/master/blueprints/automation/niro1987/deConz_ikea_tradfri_5button_remote_color.yaml
 
-  name: ZHA - IKEA TRADFRI - 5 Button Remote - Color Lights
+  name: deConz - IKEA TRADFRI - 5 Button Remote - Color Lights
 
   description: >-
     This automation simulates the use of the IKEA TRADFRI remote control
-    connected through ZHA.
+    connected through deConz.
 
   domain: automation
 
@@ -27,6 +28,7 @@ blueprint:
       description: Select the remote control you wish to use.
       selector:
         device:
+          integration: deconz
           manufacturer: IKEA of Sweden
           model: TRADFRI remote control
     light:
@@ -44,16 +46,17 @@ variables:
 
 trigger:
   - platform: event
-    event_type: zha_event
+    event_type: deconz_event
     event_data:
       device_id: !input remote
 
 action:
+  - variables:
+      event: "{{ trigger.event.data.event }}"
   - choose:
       # Short-Press on the power button.
       - conditions:
-          - condition: template
-            value_template: '{{ trigger.event.data.command == "toggle" }}'
+          - "{{ event == 1002 }}"
         sequence:
           - service: light.toggle
             target:
@@ -61,8 +64,7 @@ action:
 
       # Long-Press on the power button.
       - conditions:
-          - condition: template
-            value_template: '{{ trigger.event.data.command == "move_to_level_with_on_off" }}'
+          - "{{ event == 1001 }}"
         sequence:
           - service: light.turn_on
             target:
@@ -75,8 +77,7 @@ action:
 
       # Short-Press on the dim-up button.
       - conditions:
-          - condition: template
-            value_template: '{{ trigger.event.data.command == "step_with_on_off" }}'
+          - "{{ event == 2002 }}"
         sequence:
           - service: light.turn_on
             target:
@@ -87,8 +88,7 @@ action:
 
       # Long-Press on the dim-up button.
       - conditions:
-          - condition: template
-            value_template: '{{ trigger.event.data.command == "move_with_on_off" }}'
+          - "{{ event == 2001 }}"
         sequence:
           - repeat:
               while: []
@@ -104,8 +104,7 @@ action:
 
       # Short-Press on the dim-down button.
       - conditions:
-          - condition: template
-            value_template: '{{ trigger.event.data.command == "step" }}'
+          - "{{ event == 3002 }}"
         sequence:
           - service: light.turn_on
             target:
@@ -116,8 +115,7 @@ action:
 
       # Long-Press on the dim-down button.
       - conditions:
-          - condition: template
-            value_template: '{{ trigger.event.data.command == "move" }}'
+          - "{{ event == 3001 }}"
         sequence:
           - repeat:
               while: []
@@ -133,10 +131,7 @@ action:
 
       # Short-Press on the color-up button.
       - conditions:
-          - condition: template
-            value_template: '{{ trigger.event.data.command == "press" }}'
-          - condition: template
-            value_template: "{{ trigger.event.data.args == [256,13,0] }}"
+          - "{{ event == 5002 }}"
         sequence:
           - service: light.turn_on
             target:
@@ -154,10 +149,7 @@ action:
 
       # Long-Press on the color-up button.
       - conditions:
-          - condition: template
-            value_template: '{{ trigger.event.data.command == "hold" }}'
-          - condition: template
-            value_template: "{{ trigger.event.data.args == [3328,0] }}"
+          - "{{ event == 5001 }}"
         sequence:
           - repeat:
               while: []
@@ -180,10 +172,7 @@ action:
 
       # Short-Press on the color-down button.
       - conditions:
-          - condition: template
-            value_template: '{{ trigger.event.data.command == "press" }}'
-          - condition: template
-            value_template: "{{ trigger.event.data.args == [257,13,0] }}"
+          - "{{ event == 4002 }}"
         sequence:
           - service: light.turn_on
             target:
@@ -201,10 +190,7 @@ action:
 
       # Long-Press on the color-down button.
       - conditions:
-          - condition: template
-            value_template: '{{ trigger.event.data.command == "hold" }}'
-          - condition: template
-            value_template: "{{ trigger.event.data.args == [3329,0] }}"
+          - "{{ event == 4001 }}"
         sequence:
           - repeat:
               while: []
